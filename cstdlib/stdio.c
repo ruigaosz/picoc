@@ -61,7 +61,7 @@ void StdioOutPutc(int OutCh, StdOutStream *Stream)
         Stream->CharCount++;
     } else if (Stream->StrOutLen < 0 || Stream->StrOutLen > 1) {
         /* output to a string */
-        *Stream->StrOutPtr = OutCh;
+        *Stream->StrOutPtr = (char)OutCh;
         Stream->StrOutPtr++;
 
         if (Stream->StrOutLen > 1)
@@ -418,9 +418,10 @@ int StdioBasePrintf(struct ParseState *Parser, FILE *Stream, char *StrOut,
     }
 
     /* null-terminate */
-    if (SOStream.StrOutPtr != NULL && SOStream.StrOutLen > 0)
-        *SOStream.StrOutPtr = '\0';
-
+    if (SOStream.StrOutPtr != NULL && SOStream.StrOutLen > 0) {
+      *SOStream.StrOutPtr = '\0';
+    }
+    fflush(stdout);
     return SOStream.CharCount;
 }
 
@@ -485,14 +486,14 @@ void StdioFclose(struct ParseState *Parser, struct Value *ReturnValue,
 void StdioFread(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = fread(Param[0]->Val->Pointer,
+    ReturnValue->Val->Integer = (int)fread(Param[0]->Val->Pointer,
         Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Pointer);
 }
 
 void StdioFwrite(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = fwrite(Param[0]->Val->Pointer,
+    ReturnValue->Val->Integer = (int)fwrite(Param[0]->Val->Pointer,
         Param[1]->Val->Integer, Param[2]->Val->Integer, Param[3]->Val->Pointer);
 }
 
@@ -555,10 +556,14 @@ void StdioFerror(struct ParseState *Parser, struct Value *ReturnValue,
 void StdioFileno(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
+#ifndef UEFI_BUILD
 #ifndef WIN32
     ReturnValue->Val->Integer = fileno(Param[0]->Val->Pointer);
 #else
     ReturnValue->Val->Integer = _fileno(Param[0]->Val->Pointer);
+#endif
+#else
+    printf ("fileno() unsupported!\n");
 #endif
 }
 
@@ -618,8 +623,10 @@ void StdioPerror(struct ParseState *Parser, struct Value *ReturnValue,
 void StdioPutc(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
+#ifndef UEFI_BUILD
     ReturnValue->Val->Integer = putc(Param[0]->Val->Integer,
         Param[1]->Val->Pointer);
+#endif
 }
 
 void StdioPutchar(struct ParseState *Parser, struct Value *ReturnValue,

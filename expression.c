@@ -573,7 +573,7 @@ void ExpressionAssign(struct ParseState *Parser, struct Value *DestValue,
                 SourceValue->Typ->Base == TypePointer &&
                 SourceValue->Typ->FromType->Base == TypeChar) {
             if (DestValue->Typ->ArraySize == 0) { /* char x[] = "abcd", x is unsized */
-                int Size = strlen(SourceValue->Val->Pointer) + 1;
+                int Size = (int)strlen(SourceValue->Val->Pointer) + 1;
 #ifdef DEBUG_ARRAY_INITIALIZER
                 PRINT_SOURCE_POS();
                 fprintf(stderr, "str size: %d\n", Size);
@@ -1181,7 +1181,7 @@ void ExpressionInfixOperator(struct ParseState *Parser,
             ExpressionPushInt(Parser, StackTop, BottomLoc != TopLoc);
             break;
         case TokenMinus:
-            ExpressionPushInt(Parser, StackTop, BottomLoc - TopLoc);
+            ExpressionPushInt(Parser, StackTop, (long)(BottomLoc - TopLoc));
             break;
         default:
             ProgramFail(Parser, "invalid operation");
@@ -1355,7 +1355,7 @@ void ExpressionStackPushOperator(struct ParseState *Parser,
     StackNode->Next = *StackTop;
     StackNode->Order = Order;
     StackNode->Op = Token;
-    StackNode->Precedence = Precedence;
+    StackNode->Precedence = (unsigned short)Precedence;
     *StackTop = StackNode;
 #ifdef DEBUG_EXPRESSIONS
     printf("ExpressionStackPushOperator()\n");

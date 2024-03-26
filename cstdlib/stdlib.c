@@ -68,7 +68,10 @@ void StdlibRealloc(struct ParseState *Parser, struct Value *ReturnValue,
 void StdlibFree(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    free(Param[0]->Val->Pointer);
+	if (Param[0]->Val->Pointer) {
+		free(Param[0]->Val->Pointer);
+		Param[0]->Val->Pointer = NULL;
+	}
 }
 
 void StdlibRand(struct ParseState *Parser, struct Value *ReturnValue,

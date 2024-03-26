@@ -1,3 +1,10 @@
+
+ifeq ($(OS),Windows_NT)
+	PICOC_TOOL=../picoc.exe
+else
+	PICOC_TOOL=../picoc
+endif
+
 TESTS=	00_assignment.test \
 	01_comment.test \
 	02_printf.test \
@@ -71,12 +78,12 @@ include jpoirier/Makefile
 	@echo Test: $*...
 	@if [ "x`echo $* | grep args`" != "x" ]; \
 	then \
-		../picoc $*.c - arg1 arg2 arg3 arg4 2>&1 >$*.output; \
+		$(PICOC_TOOL) $*.c - arg1 arg2 arg3 arg4 2>&1 >$*.output; \
 	elif [ "x`echo $* | grep script`" != "x" ]; \
 	then \
-		../picoc -s $*.c 2>&1 >$*.output; \
+		$(PICOC_TOOL) -s $*.c 2>&1 >$*.output; \
 	else \
-		../picoc $*.c 2>&1 >$*.output; \
+		$(PICOC_TOOL) $*.c 2>&1 >$*.output; \
 	fi
 	@if [ "x`diff -qbu $*.expect $*.output`" != "x" ]; \
 	then \
@@ -87,7 +94,12 @@ include jpoirier/Makefile
 	fi; \
        	rm -f $*.output
 
-all: test
+all: pre_test test
+
+pre_test:
+ifneq ($(OS),Windows_NT)
+	@chmod +x $(PICOC_TOOL)
+endif
 
 test: $(TESTS)
 	@echo "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"

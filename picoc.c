@@ -1,7 +1,7 @@
 /* picoc main program - this varies depending on your operating system and
  * how you're using picoc */
 /* platform-dependent code for running programs is in this file */
-#if defined(UNIX_HOST) || defined(WIN32)
+#if defined(UNIX_HOST) || defined(WIN32) || defined(UEFI_BUILD)
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,11 +12,11 @@
 #include "picoc.h"
 
 
-#if defined(UNIX_HOST) || defined(WIN32)
+#if defined(UNIX_HOST) || defined(WIN32) || defined(UEFI_BUILD)
 #include "LICENSE.h"
 
 /* Override via STACKSIZE environment variable */
-#define PICOC_STACK_SIZE (128000*4)
+#define PICOC_STACK_SIZE (32*1024*1024)
 
 int main(int argc, char **argv)
 {

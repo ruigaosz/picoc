@@ -39,8 +39,8 @@ unsigned int TableHash(const char *Key, int Len)
 void TableInitTable(struct Table *Tbl, struct TableEntry **HashTable, int Size,
     int OnHeap)
 {
-    Tbl->Size = Size;
-    Tbl->OnHeap = OnHeap;
+    Tbl->Size = (short)Size;
+    Tbl->OnHeap = (short)OnHeap;
     Tbl->HashTable = HashTable;
     memset((void*)HashTable, '\0', sizeof(struct TableEntry*) * Size);
 }
@@ -74,8 +74,8 @@ int TableSet(Picoc *pc, struct Table *Tbl, char *Key, struct Value *Val,
         struct TableEntry *NewEntry = VariableAlloc(pc, NULL,
             sizeof(struct TableEntry), Tbl->OnHeap);
         NewEntry->DeclFileName = DeclFileName;
-        NewEntry->DeclLine = DeclLine;
-        NewEntry->DeclColumn = DeclColumn;
+        NewEntry->DeclLine = (unsigned short)DeclLine;
+        NewEntry->DeclColumn = (unsigned short)DeclColumn;
         NewEntry->p.v.Key = Key;
         NewEntry->p.v.Val = Val;
         NewEntry->Next = Tbl->HashTable[AddAt];
@@ -181,7 +181,7 @@ char *TableStrRegister2(Picoc *pc, const char *Str, int Len)
 
 char *TableStrRegister(Picoc *pc, const char *Str)
 {
-    return TableStrRegister2(pc, Str, strlen((char *)Str));
+    return TableStrRegister2(pc, Str, (int)strlen((char *)Str));
 }
 
 /* free all the strings */

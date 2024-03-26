@@ -48,6 +48,7 @@ void StringStrncat(struct ParseState *Parser, struct Value *ReturnValue,
         Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
+#ifndef UEFI_BUILD
 #ifndef WIN32
 void StringIndex(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
@@ -63,11 +64,12 @@ void StringRindex(struct ParseState *Parser, struct Value *ReturnValue,
         Param[1]->Val->Integer);
 }
 #endif
+#endif
 
 void StringStrlen(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = strlen(Param[0]->Val->Pointer);
+    ReturnValue->Val->Integer = (int)strlen(Param[0]->Val->Pointer);
 }
 
 void StringMemset(struct ParseState *Parser, struct Value *ReturnValue,
@@ -135,14 +137,14 @@ void StringStrerror(struct ParseState *Parser, struct Value *ReturnValue,
 void StringStrspn(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = strspn(Param[0]->Val->Pointer,
+    ReturnValue->Val->Integer = (int)strspn(Param[0]->Val->Pointer,
         Param[1]->Val->Pointer);
 }
 
 void StringStrcspn(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = strcspn(Param[0]->Val->Pointer,
+    ReturnValue->Val->Integer = (int)strcspn(Param[0]->Val->Pointer,
         Param[1]->Val->Pointer);
 }
 
@@ -170,10 +172,11 @@ void StringStrtok(struct ParseState *Parser, struct Value *ReturnValue,
 void StringStrxfrm(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = strxfrm(Param[0]->Val->Pointer,
+    ReturnValue->Val->Integer = (int)strxfrm(Param[0]->Val->Pointer,
         Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
 
+#ifndef UEFI_BUILD
 #ifndef WIN32
 void StringStrdup(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
@@ -188,13 +191,16 @@ void StringStrtok_r(struct ParseState *Parser, struct Value *ReturnValue,
         Param[1]->Val->Pointer, Param[2]->Val->Pointer);
 }
 #endif
+#endif
 
 /* all string.h functions */
 struct LibraryFunction StringFunctions[] =
 {
+#ifndef UEFI_BUILD
 #ifndef WIN32
 	{StringIndex,   "char *index(char *,int);"},
     {StringRindex,  "char *rindex(char *,int);"},
+#endif
 #endif
     {StringMemcpy,  "void *memcpy(void *,void *,int);"},
     {StringMemmove, "void *memmove(void *,void *,int);"},
@@ -218,9 +224,11 @@ struct LibraryFunction StringFunctions[] =
     {StringStrstr,  "char *strstr(char *,char *);"},
     {StringStrtok,  "char *strtok(char *,char *);"},
     {StringStrxfrm, "int strxfrm(char *,char *,int);"},
+#ifndef UEFI_BUILD
 #ifndef WIN32
 	{StringStrdup,  "char *strdup(char *);"},
     {StringStrtok_r,"char *strtok_r(char *,char *,char **);"},
+#endif
 #endif
     {NULL,          NULL }
 };

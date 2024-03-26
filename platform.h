@@ -13,12 +13,14 @@
 #include <setjmp.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 /* host platform includes */
 #ifdef UNIX_HOST
 # include <stdint.h>
 # include <unistd.h>
 #elif defined(WIN32) /*(predefined on MSVC)*/
+#elif defined(UEFI_BUILD)
 #else
 # error ***** A platform must be explicitly defined! *****
 #endif
@@ -53,16 +55,27 @@
 #define ALIGN_TYPE void*
 #endif
 
+#if defined (UNIX_HOST) || defined(WIN32) || defined(_AMD64_) || defined(UEFI_BUILD)
+#define GLOBAL_TABLE_SIZE (512)                /* global variable table */
+#define STRING_TABLE_SIZE (512)                /* shared string table size */
+#define STRING_LITERAL_TABLE_SIZE (512)        /* string literal table size */
+#define RESERVED_WORD_TABLE_SIZE (512)         /* reserved word table size */
+#define PARAMETER_MAX (256)                    /* maximum number of parameters to a function */
+#define LINEBUFFER_MAX (512)                  /* maximum number of characters on a line */
+#define LOCAL_TABLE_SIZE (256)                 /* size of local variable table (can expand) */
+#define STRUCT_TABLE_SIZE (256)                /* size of struct/union member table (can expand) */
+#else
 #define GLOBAL_TABLE_SIZE (97)                /* global variable table */
 #define STRING_TABLE_SIZE (97)                /* shared string table size */
 #define STRING_LITERAL_TABLE_SIZE (97)        /* string literal table size */
 #define RESERVED_WORD_TABLE_SIZE (97)         /* reserved word table size */
-#define PARAMETER_MAX (16)                    /* maximum number of parameters to a function */
+#define PARAMETER_MAX (32)                    /* maximum number of parameters to a function */
 #define LINEBUFFER_MAX (256)                  /* maximum number of characters on a line */
 #define LOCAL_TABLE_SIZE (11)                 /* size of local variable table (can expand) */
 #define STRUCT_TABLE_SIZE (11)                /* size of struct/union member table (can expand) */
+#endif
 
-#define INTERACTIVE_PROMPT_START "starting picoc " PICOC_VERSION " (Ctrl+D to exit)\n"
+#define INTERACTIVE_PROMPT_START "starting picoc " PICOC_VERSION " (Ctrl+C to exit)\n"
 #define INTERACTIVE_PROMPT_STATEMENT "picoc> "
 #define INTERACTIVE_PROMPT_LINE "     > "
 

@@ -4,10 +4,6 @@
 #include "picoc.h"
 #include "interpreter.h"
 
-
-static void PrintSourceTextErrorLine(IOFILE *Stream, const char *FileName,
-        const char *SourceText, int Line, int CharacterPos);
-
 #ifdef DEBUGGER
 static int gEnableDebugger = true;
 #else
@@ -51,7 +47,7 @@ void PicocCleanup(Picoc *pc)
 }
 
 /* platform-dependent code for running programs */
-#if defined(UNIX_HOST) || defined(WIN32)
+#if defined(UNIX_HOST) || defined(WIN32) || defined(UEFI_BUILD)
 
 #define CALL_MAIN_NO_ARGS_RETURN_VOID "main();"
 #define CALL_MAIN_WITH_ARGS_RETURN_VOID "main(__argc,__argv);"
@@ -81,11 +77,11 @@ void PicocCallMain(Picoc *pc, int argc, char **argv)
     if (FuncValue->Val->FuncDef.ReturnType == &pc->VoidType) {
         if (FuncValue->Val->FuncDef.NumParams == 0)
             PicocParse(pc, "startup", CALL_MAIN_NO_ARGS_RETURN_VOID,
-                strlen(CALL_MAIN_NO_ARGS_RETURN_VOID), true, true, false,
+                (int)strlen(CALL_MAIN_NO_ARGS_RETURN_VOID), true, true, false,
                 gEnableDebugger);
         else
             PicocParse(pc, "startup", CALL_MAIN_WITH_ARGS_RETURN_VOID,
-                strlen(CALL_MAIN_WITH_ARGS_RETURN_VOID), true, true, false,
+                (int)strlen(CALL_MAIN_WITH_ARGS_RETURN_VOID), true, true, false,
                 gEnableDebugger);
     } else {
         VariableDefinePlatformVar(pc, NULL, "__exit_value", &pc->IntType,
@@ -93,11 +89,11 @@ void PicocCallMain(Picoc *pc, int argc, char **argv)
 
         if (FuncValue->Val->FuncDef.NumParams == 0)
             PicocParse(pc, "startup", CALL_MAIN_NO_ARGS_RETURN_INT,
-                strlen(CALL_MAIN_NO_ARGS_RETURN_INT), true, true, false,
+                (int)strlen(CALL_MAIN_NO_ARGS_RETURN_INT), true, true, false,
                 gEnableDebugger);
         else
             PicocParse(pc, "startup", CALL_MAIN_WITH_ARGS_RETURN_INT,
-                strlen(CALL_MAIN_WITH_ARGS_RETURN_INT), true, true, false,
+                (int)strlen(CALL_MAIN_WITH_ARGS_RETURN_INT), true, true, false,
                 gEnableDebugger);
     }
 }
@@ -232,7 +228,7 @@ void PlatformVPrintf(IOFILE *Stream, const char *Format, va_list Args)
                 PrintSimpleInt(va_arg(Args, int), Stream);
                 break;
             case 'c':
-                PrintCh(va_arg(Args, int), Stream);
+                PrintCh((char)va_arg(Args, int), Stream);
                 break;
             case 't':
                 PrintType(va_arg(Args, struct ValueType*), Stream);

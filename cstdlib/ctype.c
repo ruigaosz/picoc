@@ -95,11 +95,13 @@ void StdIsascii(struct ParseState *Parser, struct Value *ReturnValue,
     ReturnValue->Val->Integer = isascii(Param[0]->Val->Integer);
 }
 
+#ifndef UEFI_BUILD
 void StdToascii(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
     ReturnValue->Val->Integer = toascii(Param[0]->Val->Integer);
 }
+#endif
 
 /* all string.h functions */
 struct LibraryFunction StdCtypeFunctions[] =
@@ -119,7 +121,9 @@ struct LibraryFunction StdCtypeFunctions[] =
     {StdTolower, "int tolower(int);"},
     {StdToupper, "int toupper(int);"},
     {StdIsascii, "int isascii(int);"},
+#ifndef UEFI_BUILD
     {StdToascii, "int toascii(int);"},
+#endif
     {NULL, NULL }
 };
 

@@ -4,7 +4,7 @@
 #include "interpreter.h"
 
 /* maximum size of a value to temporarily copy while we create a variable */
-#define MAX_TMP_COPY_BUF (256)
+#define MAX_TMP_COPY_BUF (8192)
 
 
 /* initialize the variable system */
@@ -98,10 +98,10 @@ struct Value *VariableAllocValueAndData(Picoc *pc, struct ParseState *Parser,
         MEM_ALIGN(sizeof(struct Value)) + DataSize, OnHeap);
     NewValue->Val = (union AnyValue*)((char*)NewValue +
         MEM_ALIGN(sizeof(struct Value)));
-    NewValue->ValOnHeap = OnHeap;
+    NewValue->ValOnHeap = (char)OnHeap;
     NewValue->AnyValOnHeap = false;
     NewValue->ValOnStack = !OnHeap;
-    NewValue->IsLValue = IsLValue;
+    NewValue->IsLValue = (char)IsLValue;
     NewValue->LValueFrom = LValueFrom;
     if (Parser)
         NewValue->ScopeID = Parser->ScopeID;
@@ -157,7 +157,7 @@ struct Value *VariableAllocValueFromExistingData(struct ParseState *Parser,
     NewValue->ValOnHeap = false;
     NewValue->AnyValOnHeap = false;
     NewValue->ValOnStack = false;
-    NewValue->IsLValue = IsLValue;
+    NewValue->IsLValue = (char)IsLValue;
     NewValue->LValueFrom = LValueFrom;
 
     return NewValue;
@@ -303,7 +303,7 @@ struct Value *VariableDefine(Picoc *pc, struct ParseState *Parser, char *Ident,
         AssignValue = VariableAllocValueFromType(pc, Parser, Typ, MakeWritable,
             NULL, pc->TopStackFrame == NULL);
 
-    AssignValue->IsLValue = MakeWritable;
+    AssignValue->IsLValue = (char)MakeWritable;
     AssignValue->ScopeID = ScopeID;
     AssignValue->OutOfScope = false;
 
@@ -447,10 +447,9 @@ void VariableStackPop(struct ParseState *Parser, struct Value *Var)
         if (Var->Val != NULL)
             HeapFreeMem(Parser->pc, Var->Val);
         Success = HeapPopStack(Parser->pc, Var, sizeof(struct Value));  /* free from heap */
-    } else if (Var->ValOnStack)
-        Success = HeapPopStack(Parser->pc, Var,
-        sizeof(struct Value)+TypeSizeValue(Var, false));  /* free from stack */
-    else
+    } else if (Var->ValOnStack) {
+        Success = HeapPopStack(Parser->pc, Var, sizeof(struct Value) + TypeSizeValue(Var, false));  /* free from stack */
+    } else
         Success = HeapPopStack(Parser->pc, Var, sizeof(struct Value));  /* value isn't our problem */
 
     if (!Success)

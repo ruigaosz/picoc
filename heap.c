@@ -5,6 +5,7 @@
 #include "interpreter.h"
 
 #ifdef DEBUG_HEAP
+#if 0
 void ShowBigList(Picoc *pc)
 {
     struct AllocNode *LPos;
@@ -16,6 +17,7 @@ void ShowBigList(Picoc *pc)
 
     printf("\n");
 }
+#endif
 #endif
 
 /* initialize the stack and heap storage */

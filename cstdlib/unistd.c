@@ -6,7 +6,7 @@
 
 
 static int ZeroValue = 0;
-
+#ifndef UEFI_BUILD
 void UnistdAccess(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
@@ -100,7 +100,7 @@ void UnistdFchdir(struct ParseState *Parser, struct Value *ReturnValue,
 void UnistdFdatasync(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-#ifdef F_FULLSYNC
+#ifdef F_FULLFSYNC
     /* Mac OS X equivalent */
     ReturnValue->Val->Integer = fcntl(Param[0]->Val->Integer, F_FULLFSYNC);
 #else
@@ -480,7 +480,7 @@ void UnistdWrite(struct ParseState *Parser, struct Value *ReturnValue,
     ReturnValue->Val->Integer = write(Param[0]->Val->Integer,
         Param[1]->Val->Pointer, Param[2]->Val->Integer);
 }
-
+#endif
 
 /* handy structure definitions */
 const char UnistdDefs[] = "\
@@ -497,6 +497,7 @@ typedef int intptr_t;\
 /* all unistd.h functions */
 struct LibraryFunction UnistdFunctions[] =
 {
+#ifndef UEFI_BUILD
     {UnistdAccess, "int access(char*, int);"},
     {UnistdAlarm, "unsigned int alarm(unsigned int);"},
 /*    {UnistdBrk, "int brk(void*);"}, */
@@ -581,6 +582,7 @@ struct LibraryFunction UnistdFunctions[] =
     {UnistdUsleep, "int usleep(useconds_t);"},
     {UnistdVfork, "pid_t vfork(void);"},
     {UnistdWrite, "ssize_t write(int, void*, size_t);"},
+#endif
     {NULL, NULL}
 };
 
@@ -599,9 +601,11 @@ void UnistdSetupFunc(Picoc *pc)
         (union AnyValue *)&optarg, true);
     VariableDefinePlatformVar(pc, NULL, "optind", &pc->IntType,
         (union AnyValue *)&optind, true);
+#ifndef UEFI_BUILD
     VariableDefinePlatformVar(pc, NULL, "opterr", &pc->IntType,
         (union AnyValue *)&opterr, true);
     VariableDefinePlatformVar(pc, NULL, "optopt", &pc->IntType,
         (union AnyValue *)&optopt, true);
+#endif
 }
 

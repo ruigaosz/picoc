@@ -7,6 +7,7 @@
 *.exp
 picoc
 build/*
+vs2022/*
 archives/
 
 CMakeLists.txt

@@ -10,17 +10,17 @@ void IncludeInit(Picoc *pc)
 {
     IncludeRegister(pc, "ctype.h", NULL, &StdCtypeFunctions[0], NULL);
     IncludeRegister(pc, "errno.h", &StdErrnoSetupFunc, NULL, NULL);
-# ifndef NO_FP
+#ifndef NO_FP
     IncludeRegister(pc, "math.h", &MathSetupFunc, &MathFunctions[0], NULL);
-# endif
+#endif
     IncludeRegister(pc, "stdbool.h", &StdboolSetupFunc, NULL, StdboolDefs);
     IncludeRegister(pc, "stdio.h", &StdioSetupFunc, &StdioFunctions[0], StdioDefs);
     IncludeRegister(pc, "stdlib.h", &StdlibSetupFunc, &StdlibFunctions[0], NULL);
     IncludeRegister(pc, "string.h", &StringSetupFunc, &StringFunctions[0], NULL);
     IncludeRegister(pc, "time.h", &StdTimeSetupFunc, &StdTimeFunctions[0], StdTimeDefs);
-# ifndef WIN32
+#ifndef WIN32
     IncludeRegister(pc, "unistd.h", &UnistdSetupFunc, &UnistdFunctions[0], UnistdDefs);
-# endif
+#endif
 }
 
 /* clean up space used by the include system */
@@ -82,7 +82,7 @@ void IncludeFile(Picoc *pc, char *FileName)
                 /* parse the setup C source code - may define types etc. */
                 if (LInclude->SetupCSource != NULL)
                     PicocParse(pc, FileName, LInclude->SetupCSource,
-                        strlen(LInclude->SetupCSource), true, true, false, false);
+                        (int)strlen(LInclude->SetupCSource), true, true, false, false);
 
                 /* set up the library functions */
                 if (LInclude->FuncList != NULL)

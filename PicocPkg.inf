@@ -1,0 +1,77 @@
+## @file
+#   A simple, basic, application showing how the Hello application could be
+#   built using the "Standard C Libraries" from StdLib.
+#
+#  Copyright (c) 2010 - 2014, Intel Corporation. All rights reserved.<BR>
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010006
+  BASE_NAME                      = picoc
+  FILE_GUID                      = 4ea97c46-7491-4dfd-b442-747010f3ce5f
+  MODULE_TYPE                    = UEFI_APPLICATION
+  VERSION_STRING                 = 0.1
+  ENTRY_POINT                    = ShellCEntryLib
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+# Arch Library
+[Sources.Ia32]
+  
+[Sources.x64]
+  
+[Sources]
+  
+# Library
+[Sources]
+  cstdlib/ctype.c
+  cstdlib/errno.c
+  cstdlib/math.c
+  cstdlib/stdbool.c
+  cstdlib/stdio.c
+  cstdlib/stdlib.c
+  cstdlib/string.c
+  cstdlib/time.c
+  cstdlib/unistd.c
+  
+  platform/library_uefi.c
+  platform/platform_uefi.c
+
+# Project
+[Sources]
+  clibrary.c
+  debug.c
+  expression.c
+  heap.c
+  include.c
+  interpreter.h
+  lex.c
+  parse.c
+  picoc.c
+  platform.c
+  table.c
+  type.c
+  variable.c
+
+[Packages]
+  StdLib/StdLib.dec
+  MdePkg/MdePkg.dec
+  ShellPkg/ShellPkg.dec
+  PicocPkg/PicocPkg.dec
+
+[Protocols]
+  gEfiI2cMasterProtocolGuid
+
+[LibraryClasses]
+  LibC
+  LibStdio
+  LibMath
+  LibTime
+  DevConsole
+  DevShell
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS   = -D UEFI_BUILD

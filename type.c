@@ -146,36 +146,36 @@ void TypeInit(Picoc *pc)
     struct DoubleAlign {char x; double y;} da;
     struct PointerAlign {char x; void *y;} pa;
 
-    IntAlignBytes = (char*)&ia.y - &ia.x;
-    PointerAlignBytes = (char*)&pa.y - &pa.x;
+    IntAlignBytes = (int)((char*)&ia.y - &ia.x);
+    PointerAlignBytes = (int)((char*)&pa.y - &pa.x);
 
     pc->UberType.DerivedTypeList = NULL;
     TypeAddBaseType(pc, &pc->IntType, TypeInt, sizeof(int), IntAlignBytes);
     TypeAddBaseType(pc, &pc->ShortType, TypeShort, sizeof(short),
-        (char*)&sa.y - &sa.x);
+        (int)((char*)&sa.y - &sa.x));
     TypeAddBaseType(pc, &pc->CharType, TypeChar, sizeof(char),
-        (char*)&ca.y - &ca.x);
+        (int)((char*)&ca.y - &ca.x));
     TypeAddBaseType(pc, &pc->LongType, TypeLong, sizeof(long),
-        (char*)&la.y - &la.x);
+        (int)((char*)&la.y - &la.x));
     TypeAddBaseType(pc, &pc->UnsignedIntType, TypeUnsignedInt,
         sizeof(unsigned int), IntAlignBytes);
     TypeAddBaseType(pc, &pc->UnsignedShortType, TypeUnsignedShort,
-        sizeof(unsigned short), (char*)&sa.y - &sa.x);
+        sizeof(unsigned short), (int)((char*)&sa.y - &sa.x));
     TypeAddBaseType(pc, &pc->UnsignedLongType, TypeUnsignedLong,
-        sizeof(unsigned long), (char*)&la.y - &la.x);
+        sizeof(unsigned long), (int)((char*)&la.y - &la.x));
     TypeAddBaseType(pc, &pc->UnsignedCharType, TypeUnsignedChar,
-        sizeof(unsigned char), (char*)&ca.y - &ca.x);
+        sizeof(unsigned char), (int)((char*)&ca.y - &ca.x));
     TypeAddBaseType(pc, &pc->VoidType, TypeVoid, 0, 1);
     TypeAddBaseType(pc, &pc->FunctionType, TypeFunction, sizeof(int),
         IntAlignBytes);
     TypeAddBaseType(pc, &pc->MacroType, TypeMacro, sizeof(int), IntAlignBytes);
     TypeAddBaseType(pc, &pc->GotoLabelType, TypeGotoLabel, 0, 1);
     TypeAddBaseType(pc, &pc->FPType, TypeFP, sizeof(double),
-        (char*)&da.y - &da.x);
+        (int)((char*)&da.y - &da.x));
     TypeAddBaseType(pc, &pc->TypeType, Type_Type, sizeof(double),
-    (char*)&da.y - &da.x);  /* must be large enough to cast to a double */
+    (int)((char*)&da.y - &da.x));  /* must be large enough to cast to a double */
     pc->CharArrayType = TypeAdd(pc, NULL, &pc->CharType, TypeArray, 0,
-        pc->StrEmpty, sizeof(char), (char*)&ca.y - &ca.x);
+        pc->StrEmpty, sizeof(char), (int)((char*)&ca.y - &ca.x));
     pc->CharPtrType = TypeAdd(pc, NULL, &pc->CharType, TypePointer, 0,
         pc->StrEmpty, sizeof(void*), PointerAlignBytes);
     pc->CharPtrPtrType = TypeAdd(pc, NULL, pc->CharPtrType, TypePointer, 0,
@@ -456,7 +456,8 @@ int TypeParseFront(struct ParseState *Parser, struct ValueType **Typ,
     case TokenVoidType:
         *Typ = &pc->VoidType;
         break;
-    case TokenStructType: case TokenUnionType:
+    case TokenStructType:
+    case TokenUnionType:
         if (*Typ != NULL)
             ProgramFail(Parser, "bad type declaration");
         TypeParseStruct(Parser, Typ, Token == TokenStructType);

@@ -43,7 +43,7 @@ void LibraryAdd(Picoc *pc, struct LibraryFunction *FuncList)
     for (Count = 0; FuncList[Count].Prototype != NULL; Count++) {
         Tokens = LexAnalyse(pc,
             (const char*)IntrinsicName, FuncList[Count].Prototype,
-            strlen((char*)FuncList[Count].Prototype), NULL);
+            (int)strlen((char*)FuncList[Count].Prototype), NULL);
         LexInitParser(&Parser, pc, FuncList[Count].Prototype, Tokens,
             IntrinsicName, true, false);
         TypeParse(&Parser, &ReturnType, &Identifier, NULL);

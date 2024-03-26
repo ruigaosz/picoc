@@ -4,7 +4,7 @@
 #include "../interpreter.h"
 
 
-static int CLOCKS_PER_SECValue = CLOCKS_PER_SEC;
+static int CLOCKS_PER_SECValue;
 
 #ifdef CLK_PER_SEC
 static int CLK_PER_SECValue = CLK_PER_SEC;
@@ -23,7 +23,7 @@ void StdAsctime(struct ParseState *Parser, struct Value *ReturnValue,
 void StdClock(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = clock();
+    ReturnValue->Val->Integer = (int)clock();
 }
 
 void StdCtime(struct ParseState *Parser, struct Value *ReturnValue,
@@ -66,7 +66,7 @@ void StdTime(struct ParseState *Parser, struct Value *ReturnValue,
 void StdStrftime(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
-    ReturnValue->Val->Integer = strftime(Param[0]->Val->Pointer,
+    ReturnValue->Val->Integer = (int)strftime(Param[0]->Val->Pointer,
         Param[1]->Val->Integer, Param[2]->Val->Pointer, Param[3]->Val->Pointer);
 }
 
@@ -80,12 +80,14 @@ void StdStrptime(struct ParseState *Parser, struct Value *ReturnValue,
         Param[1]->Val->Pointer, Param[2]->Val->Pointer);
 }
 
+#ifndef UEFI_BUILD
 void StdGmtime_r(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
     ReturnValue->Val->Pointer = (void*)gmtime_r(Param[0]->Val->Pointer,
         Param[1]->Val->Pointer);
 }
+#endif
 
 void StdTimegm(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
@@ -114,7 +116,9 @@ struct LibraryFunction StdTimeFunctions[] =
     {StdStrftime, "int strftime(char *, int, char *, struct tm *);"},
 #ifndef WIN32
     {StdStrptime, "char *strptime(char *, char *, struct tm *);"},
+#ifndef UEFI_BUILD
 	{StdGmtime_r, "struct tm *gmtime_r(int *, struct tm *);"},
+#endif
     {StdTimegm, "int timegm(struct tm *);"},
 #endif
     {NULL, NULL}
@@ -124,6 +128,8 @@ struct LibraryFunction StdTimeFunctions[] =
 /* creates various system-dependent definitions */
 void StdTimeSetupFunc(Picoc *pc)
 {
+    CLOCKS_PER_SECValue = (int)CLOCKS_PER_SEC;
+
     /* make a "struct tm" which is the same size as a native tm structure */
     TypeCreateOpaqueStruct(pc, NULL, TableStrRegister(pc, "tm"),
         sizeof(struct tm));
