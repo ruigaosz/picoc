@@ -80,14 +80,17 @@ void StdStrptime(struct ParseState *Parser, struct Value *ReturnValue,
         Param[1]->Val->Pointer, Param[2]->Val->Pointer);
 }
 
-#ifndef UEFI_BUILD
 void StdGmtime_r(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
 {
+#ifndef UEFI_BUILD
     ReturnValue->Val->Pointer = (void*)gmtime_r(Param[0]->Val->Pointer,
         Param[1]->Val->Pointer);
-}
+#else
+    printf ("gmtime_r() unsupported!\n");
+    ReturnValue->Val->Pointer = NULL;
 #endif
+}
 
 void StdTimegm(struct ParseState *Parser, struct Value *ReturnValue,
     struct Value **Param, int NumArgs)
@@ -116,9 +119,7 @@ struct LibraryFunction StdTimeFunctions[] =
     {StdStrftime, "int strftime(char *, int, char *, struct tm *);"},
 #ifndef WIN32
     {StdStrptime, "char *strptime(char *, char *, struct tm *);"},
-#ifndef UEFI_BUILD
 	{StdGmtime_r, "struct tm *gmtime_r(int *, struct tm *);"},
-#endif
     {StdTimegm, "int timegm(struct tm *);"},
 #endif
     {NULL, NULL}

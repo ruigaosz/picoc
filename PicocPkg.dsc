@@ -10,8 +10,7 @@
 ##
 
 [Defines]
-  PLATFORM_NAME                  = Picoc
-  PLATFORM_PKG                   = $(PLATFORM_NAME)Pkg
+  PLATFORM_NAME                  = picoc
   PLATFORM_GUID                  = 4bf3e0ae-4825-4c14-b67c-b83e8cf11196
   PLATFORM_VERSION               = 1.00
   DSC_SPECIFICATION              = 0x00010006
@@ -85,4 +84,4 @@
 
 [Components]
   !include StdLib/StdLib.inc
-  $(PLATFORM_PKG)/$(PLATFORM_PKG).inf
+  $(PLATFORM_NAME)/picocpkg.inf

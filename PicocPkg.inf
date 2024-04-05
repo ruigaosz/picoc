@@ -60,7 +60,7 @@
   StdLib/StdLib.dec
   MdePkg/MdePkg.dec
   ShellPkg/ShellPkg.dec
-  PicocPkg/PicocPkg.dec
+  picoc/picocpkg.dec
 
 [Protocols]
   gEfiI2cMasterProtocolGuid

@@ -564,6 +564,7 @@ void StdioFileno(struct ParseState *Parser, struct Value *ReturnValue,
 #endif
 #else
     printf ("fileno() unsupported!\n");
+    ReturnValue->Val->Integer = 0;
 #endif
 }
 
@@ -626,6 +627,9 @@ void StdioPutc(struct ParseState *Parser, struct Value *ReturnValue,
 #ifndef UEFI_BUILD
     ReturnValue->Val->Integer = putc(Param[0]->Val->Integer,
         Param[1]->Val->Pointer);
+#else
+    printf("putc() unsupported!\n");
+    ReturnValue->Val->Integer = 0;
 #endif
 }
 

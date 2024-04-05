@@ -1,6 +1,6 @@
 @title Setting ......
 @set PLATFORM_NAME=picoc
-@set PLATFORM_PKG=%PLATFORM_NAME%Pkg
+@set PLATFORM_PKG=%PLATFORM_NAME%
 @cd ..
 
 @if /I "%1"=="/?" (
@@ -28,7 +28,7 @@
 @set MAX_CPUS=%NUMBER_OF_PROCESSORS%
 @set TARGET_BUILD=RELEASE
 
-@set ACTIVE_DSC=%PLATFORM_PKG%\%PLATFORM_PKG%.dsc
+@set ACTIVE_DSC=%PLATFORM_PKG%\picocpkg.dsc
 
 ::Build time1 start >>>
 @set nSec=0
@@ -53,7 +53,7 @@
 
 @if %ERRORLEVEL% NEQ 0 goto ENDM
 
-@copy /y Build\%PLATFORM_NAME%\%TARGET_BUILD%_%TOOL_CHAIN%\X64\*.efi %PLATFORM_PKG%
+@copy /y Build\%PLATFORM_PKG%\%TARGET_BUILD%_%TOOL_CHAIN%\X64\*.efi %PLATFORM_PKG%
 
 @goto ENDM
 

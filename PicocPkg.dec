@@ -21,21 +21,6 @@
 [Protocols]
 
 [PcdsFeatureFlag]
-  ## Indicates if Utility Application will print the verbose information.
-  #  This PCD is a sample to explain FeatureFlag PCD usage.<BR><BR>
-  #   TRUE  - Utility Application will print the verbose information.<BR>
-  #   FALSE - Utility Application will not print the verbose information.<BR>
-  # @Prompt Enable Utility print.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdUtilityPrintEnable|TRUE|BOOLEAN|0x0001200a
 
 [PcdsFixedAtBuild, PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
-  ## This PCD defines the times to print Utility string.
-  #  This PCD is a sample to explain UINT32 PCD usage.
-  # @Prompt Utility print times.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdUtilityPrintTimes|1|UINT32|0x40000005
-  
-  ## This PCD defines the Utility print string.
-  #  This PCD is a sample to explain String typed PCD usage.
-  # @Prompt Utility print string.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdUtilityPrintString|L"UEFI Utility!\n"|VOID*|0x40000004
   
